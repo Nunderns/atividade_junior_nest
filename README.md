@@ -1,3 +1,34 @@
+# Pedidos Microserviço
+
+API NestJS para gerenciamento de clientes e pedidos com upload de comprovantes e fila de notificações.
+
+Quickstart
+
+- Copie `.env.example` para `.env` e ajuste valores.
+- Inicie MongoDB e Redis (via Docker):
+
+```powershell
+docker run -d --name mongo -p 27017:27017 mongo:6
+docker run -d --name redis -p 6379:6379 redis:7
+```
+
+- Instale dependências e rode em modo dev:
+
+```bash
+npm install
+npm run start:dev
+```
+
+API docs: http://localhost:3000/docs
+
+Endpoints principais
+
+- `POST /clientes` CRUD clientes
+- `POST /pedidos` CRUD pedidos (calcula totais USD/BRL)
+- `POST /pedidos/:id/comprovante` upload de comprovante
+- `GET /relatorios/top-clientes?limit=10` top clientes por gasto em BRL
+
+Env vars (veja `.env.example`)
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
