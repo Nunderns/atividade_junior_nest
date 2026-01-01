@@ -16,6 +16,25 @@ export class ReportsController {
       .aggregate([
         { $group: { _id: '$customerId', total: { $sum: '$totalBRL' } } },
         { $sort: { total: -1 } },
+        {
+          $lookup: {
+            from: 'customers',
+            localField: '_id',
+            foreignField: '_id',
+            as: 'customer',
+          },
+        },
+        { $unwind: { path: '$customer', preserveNullAndEmptyArrays: true } },
+        {
+          $project: {
+            customerId: '$_id',
+            totalBRL: '$total',
+            name: '$customer.name',
+            email: '$customer.email',
+            country: '$customer.country',
+            _id: 0,
+          },
+        },
         { $limit: l },
       ])
       .exec();
