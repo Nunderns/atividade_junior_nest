@@ -1,13 +1,13 @@
 import { Logger } from '@nestjs/common';
-import { OnWorkerEvent, Process, Processor } from '@nestjs/bullmq';
-import { Job } from 'bullmq';
+import { Processor, OnWorkerEvent } from '@nestjs/bullmq';
+import { Job, Worker } from 'bullmq';
+import { WorkerHost } from '@nestjs/bullmq';
 
 @Processor('notificacao')
-export class NotificationsProcessor {
+export class NotificationsProcessor extends WorkerHost {
   private readonly logger = new Logger(NotificationsProcessor.name);
 
-  @Process('pedido-criado')
-  async handleOrderCreated(job: Job<{ orderId: string; customerId: string }>) {
+  async process(job: Job<{ orderId: string; customerId: string }>): Promise<void> {
     const { orderId, customerId } = job.data;
     this.logger.log(`Enviando e-mail de confirmação para pedido ${orderId} (cliente ${customerId})`);
   }
