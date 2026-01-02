@@ -1,129 +1,184 @@
-# Pedidos Microserviço
+# 📦 Pedidos Microserviço
 
-API NestJS para gerenciamento de clientes e pedidos com upload de comprovantes e fila de notificações.
+API **NestJS** para gerenciamento de **clientes e pedidos**, com **upload de comprovantes (AWS S3 ou local)**, **processamento assíncrono com BullMQ (Redis)** e **relatórios agregados**.
 
-Quickstart
+Este projeto foi desenvolvido como **teste técnico para Backend**, com foco em arquitetura limpa, boas práticas, validação, integrações externas e segurança.
 
-- Copie `.env.example` para `.env` e ajuste valores.
-- Inicie MongoDB e Redis (via Docker):
+---
 
-```powershell
+## 🧱 Stack utilizada
+
+- **Node.js / TypeScript**
+- **NestJS**
+- **MongoDB (Mongoose)**
+- **Redis + BullMQ**
+- **AWS S3 (upload de arquivos)**
+- **Axios (API externa de câmbio USD/BRL)**
+- **Swagger (OpenAPI)**
+
+---
+
+## 🚀 Quickstart
+
+### 1️⃣ Configuração de ambiente
+
+Copie o arquivo de exemplo:
+
+```bash
+cp .env.example .env
+```
+
+Edite o .env com os valores adequados (MongoDB, Redis, AWS, etc).
+
+⚠️ Por segurança, credenciais reais não são versionadas.
+Use apenas placeholders no .env.example.
+
+2️⃣ Subir dependências (MongoDB e Redis)
+
+Você pode usar Docker para iniciar os serviços:
+```bash
 docker run -d --name mongo -p 27017:27017 mongo:6
 docker run -d --name redis -p 6379:6379 redis:7
 ```
-
-- Instale dependências e rode em modo dev:
-
+3️⃣ Instalar dependências e rodar a aplicação
 ```bash
 npm install
 npm run start:dev
 ```
 
-API docs: http://localhost:3000/docs
-
-Endpoints principais
-
-- `POST /clientes` CRUD clientes
-- `POST /pedidos` CRUD pedidos (calcula totais USD/BRL)
-- `POST /pedidos/:id/comprovante` upload de comprovante
-- `GET /relatorios/top-clientes?limit=10` top clientes por gasto em BRL
-
-Env vars (veja `.env.example`)
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
+A API estará disponível em:
 ```bash
-$ npm install
+http://localhost:3000
+```
+📚 Documentação da API (Swagger)
+
+A documentação interativa está disponível em:
+```bash
+http://localhost:3000/docs
 ```
 
-## Compile and run the project
+Inclui:
+- Endpoints
+- Modelos
+- Validações
 
-```bash
-# development
-$ npm run start
+Parâmetros de query e body
 
-# watch mode
-$ npm run start:dev
+🔌 Principais endpoints
+**Clientes**
 
-# production mode
-$ npm run start:prod
-```
+- POST /clientes
+- GET /clientes
+- GET /clientes/:id
+- PUT /clientes/:id
+- DELETE /clientes/:id
 
-## Run tests
+**Pedidos**
 
-```bash
-# unit tests
-$ npm run test
+POST /pedidos
 
-# e2e tests
-$ npm run test:e2e
+Calcula automaticamente totalUSD e totalBRL
 
-# test coverage
-$ npm run test:cov
-```
+Consome API externa de câmbio
 
-## Deployment
+Enfileira notificação assíncrona
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+GET /pedidos
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Suporte a paginação (page, limit)
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+GET /pedidos/:id
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+PUT /pedidos/:id
 
-## Resources
+DELETE /pedidos/:id
 
-Check out a few resources that may come in handy when working with NestJS:
+Upload de comprovantes
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+POST /pedidos/:id/comprovante
 
-## Support
+Upload de PDF ou imagem
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Suporte a AWS S3 ou armazenamento local
 
-## Stay in touch
+Salva a URL do comprovante no pedido
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Relatórios
 
-## License
+GET /relatorios/top-clientes?limit=10
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Retorna os clientes ordenados pelo valor total gasto em BRL
+
+Inclui dados do cliente (nome, email, país)
+
+📦 Upload de arquivos (S3 ou local)
+
+O projeto suporta dois modos de upload:
+
+🔹 AWS S3 (produção)
+
+Configure no .env:
+
+STORAGE_PROVIDER=s3
+USE_LOCAL_UPLOAD=false
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+AWS_REGION=us-east-1
+S3_BUCKET=your_bucket_name
+
+🔹 Armazenamento local (desenvolvimento)
+USE_LOCAL_UPLOAD=true
+UPLOADS_PATH=uploads
+
+🔁 Processamento assíncrono (BullMQ)
+
+Fila: notificacao
+
+Ao criar um pedido:
+
+Um job é enfileirado
+
+O processor consome o job e simula envio de e-mail via log
+
+Implementado usando:
+
+@nestjs/bullmq
+
+@Processor
+
+@Process
+
+🌎 Conversão de moeda
+
+A conversão USD → BRL é feita via API externa:
+
+https://economia.awesomeapi.com.br/json/last/USD-BRL
+
+
+Configurável via variável de ambiente:
+
+EXCHANGE_RATE_API_URL=https://economia.awesomeapi.com.br/json/last/USD-BRL
+
+🧪 Testes
+npm run test
+npm run test:e2e
+npm run test:cov
+
+
+⚠️ Testes automatizados são opcionais no escopo do teste, mas a estrutura está preparada.
+
+🔐 Segurança
+
+Credenciais sensíveis não são versionadas
+
+.env.example contém apenas placeholders
+
+Upload e filas são abstraídos por serviços, facilitando troca de providers
+
+📝 Observações técnicas
+
+A API não gera comprovantes automaticamente
+
+O backend apenas recebe e armazena arquivos enviados
+
+Decisão alinhada ao escopo do teste e separação de responsabilidades
